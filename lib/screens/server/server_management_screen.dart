@@ -138,6 +138,10 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                     ),
               const SizedBox(height: 24),
 
+              // Power & UPS Monitor Card (3T Power Stability Mitigation)
+              _buildPowerMonitorCard(context),
+              const SizedBox(height: 24),
+
               // 4. Bottom Row (Logs & Backup)
               isDesktop
                   ? Row(
@@ -259,7 +263,7 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'CPU LOAD',
+            'AI ENGINE CORE (QUANTIZED)',
             style: TextStyle(
               color: Colors.white.withOpacity(0.5),
               fontWeight: FontWeight.bold,
@@ -268,13 +272,28 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            '18.4%',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              const Text(
+                '18.4%',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Model: SLM 8-bit (Low Power Mode)',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.6),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
           const Spacer(),
           Row(
@@ -310,6 +329,80 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPowerMonitorCard(BuildContext context) {
+    return Card(
+      color: const Color(0xFF1E1E1E), // Dark grey background
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppTheme.border, width: 0.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: const [
+                    Icon(Icons.flash_on, color: Colors.amber, size: 22),
+                    SizedBox(width: 8),
+                    Text(
+                      'Power & UPS Monitor',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade900.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green, width: 0.5),
+                  ),
+                  child: const Text(
+                    'Daya Utama: PLN (220V - Stabil)',
+                    style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  'Kapasitas UPS (Baterai Darurat)',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+                Text(
+                  '100% - Siaga Penuh',
+                  style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: const LinearProgressIndicator(
+                value: 1.0,
+                color: Colors.green,
+                backgroundColor: Colors.white10,
+                minHeight: 8,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

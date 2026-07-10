@@ -17,6 +17,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
   int _secondsElapsed = 2538; // 42 minutes 18 seconds
   int _wordCount = 1248;
   Timer? _timer;
+  String _selectedDialect = 'Bahasa Indonesia (Standard)';
 
   // Stream of transcription sentences
   final List<String> _fullTranscriptText = [
@@ -145,6 +146,7 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
         children: [
           // Header: SIBI + Badge chip
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'SIBI',
@@ -154,26 +156,51 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
                     ),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(color: AppTheme.success, shape: BoxShape.circle),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(color: AppTheme.success, shape: BoxShape.circle),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'LIVE & ONLINE',
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'LIVE & ONLINE',
-                      style: TextStyle(
-                        color: Colors.green.shade700,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade400, width: 1),
+                      ),
+                      child: Text(
+                        'Koneksi Stabil - STT Aktif',
+                        style: TextStyle(
+                          color: Colors.orange.shade800,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -276,13 +303,80 @@ class _LiveSessionScreenState extends State<LiveSessionScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // Model Bahasa & Aksentuasi Dropdown Form Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Model Bahasa & Aksentuasi',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedDialect,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: AppTheme.border),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: AppTheme.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(color: AppTheme.primary),
+                          ),
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                        icon: const Icon(Icons.arrow_drop_down, size: 18),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Bahasa Indonesia (Standard)',
+                            child: Text('Bahasa Indonesia (Standard)'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Aksen Lokal Sumatera',
+                            child: Text('Aksen Lokal Sumatera'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Aksen Lokal Jawa',
+                            child: Text('Aksen Lokal Jawa'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Aksen Lokal Indonesia Timur',
+                            child: Text('Aksen Lokal Indonesia Timur'),
+                          ),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedDialect = val;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   // Spec ListTiles
                   ListView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
-                      _buildListTileSpec(Icons.translate, 'Bahasa Indonesia', 'Standard Modern'),
                       _buildListTileSpec(Icons.bolt, 'DeepSpeech v2.4', 'Jakarta-01 Node'),
                     ],
                   ),

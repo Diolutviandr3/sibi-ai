@@ -12,6 +12,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
+  bool _highContrastMode = false;
 
   @override
   void dispose() {
@@ -24,7 +25,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final Size size = MediaQuery.of(context).size;
     final bool isDesktop = size.width > 900;
 
-    return Scaffold(
+    Widget mainScreen = Scaffold(
+      backgroundColor: _highContrastMode ? Colors.black : AppTheme.background,
       // Floating Action Button on Bottom Left as in screenshot (above sidebar edge or overlay)
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -43,11 +45,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               _buildHeader(context),
               const SizedBox(height: 24),
 
-              // 2. Hero Action Card
+              // 2. Info Cards Row
               _buildHeroCard(context, isDesktop),
               const SizedBox(height: 24),
 
-              // 3. Grid of Resource Statuses
+              // 3. Status Monitor Cards
               isDesktop
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,6 +79,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
+
+    if (_highContrastMode) {
+      return Theme(
+        data: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: Colors.black,
+          cardTheme: const CardThemeData(
+            color: Color(0xFF1A1A1A),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              side: BorderSide(color: Colors.white54, width: 1.5),
+            ),
+          ),
+        ),
+        child: mainScreen,
+      );
+    }
+    return mainScreen;
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -108,10 +128,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: Icon(
+                _highContrastMode ? Icons.visibility : Icons.remove_red_eye,
+                color: _highContrastMode ? Colors.amber : AppTheme.textPrimary,
+              ),
+              tooltip: 'Toggle High-Contrast Mode (Proyektor 3T)',
+              onPressed: () {
+                setState(() {
+                  _highContrastMode = !_highContrastMode;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      _highContrastMode
+                          ? 'High-Contrast Mode diaktifkan (Optimasi Proyektor 3T)'
+                          : 'High-Contrast Mode dinonaktifkan',
+                    ),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
             Stack(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.notifications_none, color: AppTheme.textPrimary),
+                  icon: Icon(Icons.notifications_none, color: _highContrastMode ? Colors.white : AppTheme.textPrimary),
                   onPressed: () {},
                 ),
                 Positioned(
@@ -300,6 +343,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
               borderRadius: BorderRadius.circular(4),
               minHeight: 6,
             ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Baterai Cadangan (UPS)',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const Text(
+                  '85% - Stabil',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            LinearProgressIndicator(
+              value: 0.85,
+              backgroundColor: Colors.grey.shade100,
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(4),
+              minHeight: 6,
+            ),
           ],
         ),
       ),
@@ -324,13 +392,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   child: Icon(Icons.dns, color: Colors.indigo.shade700, size: 20),
                 ),
-                Text(
-                  'Latency: 12ms',
-                  style: TextStyle(
-                    color: Colors.indigo.shade700,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.green.shade200, width: 0.5),
+                      ),
+                      child: Text(
+                        'Mode: Terpusat',
+                        style: TextStyle(
+                          color: Colors.green.shade700,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    /* 
+                    // IMPLEMENTASI EDGE FALLBACK:
+                    // Gunakan container ini jika koneksi server terputus
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade200, width: 0.5),
+                      ),
+                      child: Text(
+                        'Mode: Edge Fallback',
+                        style: TextStyle(
+                          color: Colors.orange.shade700,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    */
+                    const SizedBox(width: 8),
+                    Text(
+                      'Latency: 12ms',
+                      style: TextStyle(
+                        color: Colors.indigo.shade700,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

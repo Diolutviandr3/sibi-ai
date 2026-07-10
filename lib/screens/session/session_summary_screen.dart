@@ -158,6 +158,31 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: const Icon(Icons.print, color: AppTheme.textPrimary),
+              tooltip: 'Cetak Fisik Langsung',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Mengirim dokumen laporan PDF ke proyektor / printer lokal...'),
+                    backgroundColor: AppTheme.primary,
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.bluetooth, color: AppTheme.textPrimary),
+              tooltip: 'Bagikan via Bluetooth Masal',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Memulai pemancaran data offline (Bluetooth Mass-Share) ke perangkat siswa...'),
+                    backgroundColor: AppTheme.success,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
             OutlinedButton.icon(
               onPressed: () {
                 _showExportDialog(context, topic: topic);
@@ -304,6 +329,27 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
                 ),
                 Row(
                   children: [
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Mode Edit Guru diaktifkan (Fitur Human-in-the-Loop)'),
+                            backgroundColor: AppTheme.primary,
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.edit, size: 14, color: AppTheme.textPrimary),
+                      label: const Text(
+                        'Mode Edit Guru',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        side: const BorderSide(color: AppTheme.border),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     _buildZoomIcon(Icons.zoom_in),
                     const SizedBox(width: 4),
                     _buildZoomIcon(Icons.zoom_out),
